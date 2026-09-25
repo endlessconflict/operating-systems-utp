@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    image: tarea2-app
+    container_name: tarea2-app
+    ports:
+      - "5000:5000"
+    cpus: "1.0"          # limite: una CPU completa como maximo
+    cpuset: "0"          # y solo puede usar el nucleo 0
+    cap_add:
+      - SYS_NICE         # permite bajar el nice (subir prioridad) dentro del contenedor
+    environment:
+      LOGIN_CPU_SECONDS: "0.5"
+      STRESS_WORKERS: "20"
+      APP_NICE: "${APP_NICE:-0}"
+      STRESS_NICE: "${STRESS_NICE:-0}"
