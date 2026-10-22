@@ -1,0 +1,30 @@
+services:
+  nginx:
+    image: nginx:1.25
+    container_name: caso_nginx
+    mem_limit: 512m
+    memswap_limit: 512m
+    cpus: 0.5
+    ulimits:
+      nofile:
+        soft: 32768
+        hard: 32768
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+
+  mysql:
+    image: mysql:5.7
+    container_name: caso_mysql
+    mem_limit: 2560m
+    memswap_limit: 2560m
+    cpus: 1.5
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+    environment:
+      MYSQL_ROOT_PASSWORD: caso2026
+    volumes:
+      - ./mysql.cnf:/etc/mysql/conf.d/caso.cnf:ro

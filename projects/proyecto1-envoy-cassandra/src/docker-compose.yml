@@ -1,0 +1,29 @@
+services:
+  envoy:
+    image: envoyproxy/envoy:v1.31-latest
+    container_name: envoy
+    command: ["-c", "/etc/envoy/envoy.yaml", "--concurrency", "1"]
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml:ro
+    ports:
+      - "9042:9042"
+      - "9901:9901"
+    mem_limit: 614m
+    memswap_limit: 614m
+    cpus: 0.75
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    depends_on:
+      - cassandra
+  cassandra:
+    build: .
+    image: cassandra5-g2
+    container_name: cassandra
+    mem_limit: 3993m
+    memswap_limit: 3993m
+    cpus: 2.25
+    environment:
+      MAX_HEAP_SIZE: 2048M
+      CASSANDRA_CLUSTER_NAME: grupo2

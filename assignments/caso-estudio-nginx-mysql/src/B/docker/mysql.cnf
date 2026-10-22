@@ -1,0 +1,5 @@
+[mysqld]
+max_connections = 100
+innodb_buffer_pool_size = 2060M
+innodb_buffer_pool_chunk_size = 4M
+innodb_buffer_pool_instances = 1

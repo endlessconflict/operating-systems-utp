@@ -1,0 +1,30 @@
+admin:
+  address:
+    socket_address: { address: 0.0.0.0, port_value: 9901 }
+static_resources:
+  listeners:
+    - name: cql
+      address:
+        socket_address: { address: 0.0.0.0, port_value: 9042 }
+      per_connection_buffer_limit_bytes: 32768
+      filter_chains:
+        - filters:
+            - name: envoy.filters.network.tcp_proxy
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
+                stat_prefix: cassandra_cql
+                cluster: cassandra
+  clusters:
+    - name: cassandra
+      type: STRICT_DNS
+      connect_timeout: 2s
+      circuit_breakers:
+        thresholds:
+          - max_connections: 150
+      load_assignment:
+        cluster_name: cassandra
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address: { address: cassandra, port_value: 9042 }
