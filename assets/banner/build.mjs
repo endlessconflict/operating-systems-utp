@@ -78,30 +78,6 @@ for (let i = 12; i >= 1; i--) {
   tuxExt += `<g transform="translate(${(i * 0.95).toFixed(2)},${(-i * 0.57).toFixed(2)})"><g fill="none" stroke="var(--${h})" stroke-width=".85" stroke-linejoin="round">${SIL}</g><g fill="color-mix(in srgb, var(--${h}) ${16 + (12 - i)}%, var(--gray-1000))">${SIL}</g></g>`;
 }
 
-// ---------- Simple Icons logos (CC0) as extruded foil ----------
-const iconPath = (f) => read(f).match(/\sd="([^"]+)"/)[1];
-function foil(id, dpath, { spin = false, depth = 9 } = {}) {
-  const shape = `<path d="${dpath}"/>`;
-  const wrap = (inner) => (spin ? `<g class="spin">${inner}</g>` : inner);
-  let ext = '';
-  for (let i = depth; i >= 1; i--) {
-    const h = i % 2 ? 'uv-400' : 'ice-400';
-    ext += `<g transform="translate(${(i * 0.11).toFixed(2)},${(-i * 0.066).toFixed(2)})">${wrap(`<g fill="color-mix(in srgb, var(--${h}) ${18 + (depth - i) * 2}%, var(--gray-1000))" stroke="var(--${h})" stroke-width=".05" stroke-opacity=".7">${shape}</g>`)}</g>`;
-  }
-  return `
-  <clipPath id="${id}-c">${shape}</clipPath>
-  ${ext}
-  <g transform="translate(-.28,0)" fill="none" stroke="var(--uv-400)" stroke-width=".12" opacity=".6">${wrap(shape)}</g>
-  <g transform="translate(.28,0)" fill="none" stroke="var(--ice-400)" stroke-width=".12" opacity=".6">${wrap(shape)}</g>
-  ${wrap(`<g fill="var(--gray-100)">${shape}</g>
-  <g clip-path="url(#${id}-c)">
-    <rect x="-2" y="-2" width="28" height="28" fill="url(#film24)" opacity=".22" style="mix-blend-mode:multiply"/>
-    <g filter="url(#diff24)" style="mix-blend-mode:multiply">${shape}</g>
-    <g filter="url(#spec24)" style="mix-blend-mode:screen" opacity=".55">${shape}</g>
-  </g>`)}
-  <g clip-path="url(#${id}-c)">${spin ? '' : `<rect class="sweep24" x="-2" y="-2" width="28" height="28" fill="url(#streak24)" style="mix-blend-mode:screen"/>`}</g>`;
-}
-
 // ---------- isometric geometry ----------
 const C = Math.cos(Math.PI / 6);
 const iso = (cx, cy) => (x, y, z = 0) => [cx + (x - y) * C, cy + (x + y) * 0.5 - z];
@@ -135,7 +111,7 @@ function pedestal(cx, cy, a, label, th = 16) {
 
 // floor: a large faint board that dissolves into the canvas edges
 function floor() {
-  const P = iso(1180, 420), a = 440, b = 160;
+  const P = iso(PED.tux[0], 400), a = 440, b = 160;
   const T = [P(-a, -b), P(a, -b), P(a, b), P(-a, b)];
   let s = `<polygon points="${poly(T)}" fill="var(--gray-950)" stroke="var(--uv-400)" stroke-width="2" opacity=".9"/>`;
   for (let k = 1; k < 22; k++) {
@@ -147,15 +123,15 @@ function floor() {
   return s;
 }
 
-// pedestal centres (screen space) and the traces that join them on the floor
-const PED = { bsd: [915, 296], tux: [1185, 304], void: [1440, 284] };
+// one pedestal; traces leave its front faces and dissolve into the floor
+const PED = { tux: [1230, 280] }, SZ = 84, TH = 16;
 const trace = (pts) => `M${pts.map(pt).join(' L')}`;
-// edge midpoints of the pedestals' front faces: right face of one -> left face of the next
-const SZ = { bsd: 62, tux: 78, void: 56 }, TH = 16;
-const rightMid = (k) => [PED[k][0] + SZ[k] * C, PED[k][1] + SZ[k] / 2 + TH];
-const leftMid = (k) => [PED[k][0] - SZ[k] * C, PED[k][1] + SZ[k] / 2 + TH];
-const link = (s, e) => trace([s, [s[0] + 26, s[1] + 15], [e[0] - 26, s[1] + 15], [e[0] - 26, e[1] + 15], e]);
-const traces = [link(rightMid('bsd'), leftMid('tux')), link(rightMid('tux'), leftMid('void')), trace([[PED.tux[0], PED.tux[1] + SZ.tux + TH], [PED.tux[0], H]])];
+const [px, py] = PED.tux;
+const traces = [
+  trace([[px - SZ * C, py + SZ / 2 + TH], [px - SZ * C - 30, py + SZ / 2 + TH + 17], [px - 330, py + SZ / 2 + TH + 17], [px - 380, py + 30]]),
+  trace([[px + SZ * C, py + SZ / 2 + TH], [px + SZ * C + 30, py + SZ / 2 + TH + 17], [px + 300, py + SZ / 2 + TH + 17], [px + 360, py + 20]]),
+  trace([[px, py + SZ + TH], [px, H]]),
+];
 
 const tokens = read('../../../ring-zero-design-system/tokens.css').match(/:root,\[data-theme="pitch"\]\{([\s\S]*?)\}/)[1];
 const bands = `<stop offset="0" stop-color="var(--ice-400)"/><stop offset=".2" stop-color="var(--uv-400)"/><stop offset=".4" stop-color="var(--flare-400)"/><stop offset=".6" stop-color="var(--kapton-400)"/><stop offset=".8" stop-color="var(--ice-200)"/><stop offset="1" stop-color="var(--ice-400)"/>`;
@@ -165,11 +141,11 @@ const lighting = (id, sd, scale) => `
  <filter id="spec${id}" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="${sd}" result="h"/><feSpecularLighting in="h" surfaceScale="${scale}" specularConstant="1.1" specularExponent="22" lighting-color="#e0f9ff" result="s"><feDistantLight azimuth="225" elevation="38"/></feSpecularLighting><feComposite in="s" in2="SourceAlpha" operator="in"/></filter>`;
 
 // Tux placement: 216 x 256 art units, feet at y ~ 245
-const TK = 0.96, TX = PED.tux[0] - 108 * TK, TY = PED.tux[1] - 250 * TK;
+const TK = 1.0, TX = PED.tux[0] - 108 * TK, TY = PED.tux[1] - 250 * TK;
 const FOOT = PED.tux[1] - 4;
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-labelledby="t">
-<title id="t">Operating Systems, UTP 2026. 5 labs, 6 assignments, 1 project. Holographic Tux, OpenBSD Puffy and Void Linux logos on isometric chip plates.</title>
+<title id="t">Operating Systems, UTP 2026. 5 labs, 6 assignments, 1 project. Holographic Tux standing on an isometric chip plate.</title>
 <style>
 @font-face{font-family:"RZ Display";src:url(data:font/woff2;base64,${b64('fonts/bricolage-800.woff2')}) format("woff2");font-weight:800}
 @font-face{font-family:"RZ Mono";src:url(data:font/woff2;base64,${b64('fonts/martian-500.woff2')}) format("woff2");font-weight:500}
@@ -178,22 +154,12 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.
 .disp{font-family:"RZ Display","Arial Black",sans-serif;font-weight:800;letter-spacing:-.035em}
 .mono5{font-family:"RZ Mono",ui-monospace,monospace;font-weight:500}
 .mono7{font-family:"RZ Mono",ui-monospace,monospace;font-weight:700}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 @keyframes sweep{0%,55%{transform:translateX(-230px)}100%{transform:translateX(230px)}}
-@keyframes sweep24{0%,60%{transform:translateX(-26px)}100%{transform:translateX(26px)}}
-@keyframes spin{to{transform:rotate(360deg)}}
 @keyframes flow{to{stroke-dashoffset:-48}}
-@keyframes scan{to{transform:translateY(4px)}}
-@keyframes pulse{0%,100%{opacity:.07}50%{opacity:.13}}
+@keyframes pulse{0%,100%{opacity:.28}50%{opacity:.42}}
 @keyframes ghost{0%,92%,100%{transform:translateX(0)}94%{transform:translateX(-5px)}96%{transform:translateX(4px)}}
-.bob1{animation:bob 6s ease-in-out infinite}
-.bob2{animation:bob 6s ease-in-out -2s infinite}
-.bob3{animation:bob 6s ease-in-out -4s infinite}
 .sweep{animation:sweep 7s ease-in-out infinite}
-.sweep24{animation:sweep24 7s ease-in-out -3s infinite}
-.spin{transform-box:view-box;transform-origin:12px 12px;animation:spin 18s linear infinite}
 .flow{stroke-dasharray:10 14;animation:flow 1.6s linear infinite}
-.scan{animation:scan .9s steps(2) infinite}
 .cone{animation:pulse 5s ease-in-out infinite}
 .gh1{animation:ghost 9s infinite}
 .gh2{animation:ghost 9s -.1s infinite reverse}
@@ -202,9 +168,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.
 <defs>
  <linearGradient id="foil" x1="0" y1="0" x2="1" y2="1">${bands}</linearGradient>
  <radialGradient id="film" gradientUnits="userSpaceOnUse" cx="100" cy="150" r="46" spreadMethod="reflect" gradientTransform="translate(100 150) rotate(-28) scale(.8 1.25) translate(-100 -150)">${bands}</radialGradient>
- <radialGradient id="film24" gradientUnits="userSpaceOnUse" cx="12" cy="12" r="5" spreadMethod="reflect" gradientTransform="translate(12 12) rotate(-28) scale(.8 1.25) translate(-12 -12)">${bands}</radialGradient>
  <linearGradient id="streak" gradientUnits="userSpaceOnUse" x1="30" y1="10" x2="190" y2="150">${streakStops}</linearGradient>
- <linearGradient id="streak24" gradientUnits="userSpaceOnUse" x1="2" y1="2" x2="22" y2="20">${streakStops}</linearGradient>
  <linearGradient id="halo" gradientUnits="userSpaceOnUse" x1="30" y1="10" x2="190" y2="150"><stop offset=".25" stop-color="var(--ice-200)" stop-opacity="0"/><stop offset=".5" stop-color="var(--ice-200)" stop-opacity=".14"/><stop offset=".75" stop-color="var(--ice-200)" stop-opacity="0"/></linearGradient>
  <linearGradient id="bsheen" gradientUnits="userSpaceOnUse" x1="60" y1="70" x2="150" y2="190"><stop offset="0" stop-color="var(--ice-200)" stop-opacity="0"/><stop offset=".35" stop-color="var(--ice-200)" stop-opacity=".3"/><stop offset=".55" stop-color="var(--gray-0)" stop-opacity=".24"/><stop offset="1" stop-color="var(--uv-200)" stop-opacity="0"/></linearGradient>
  <linearGradient id="rimfade" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="216" y2="200"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#fff" stop-opacity=".25"/><stop offset="1" stop-color="#000"/></linearGradient>
@@ -221,11 +185,9 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.
  <filter id="tipgl" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation=".9"/></filter>
  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="8"/></filter>
  <filter id="tglow" x="-10%" y="-50%" width="120%" height="200%"><feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
- <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter>
  <filter id="rg" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.2"/></filter>
  <filter id="fres" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="3"/></filter>
  ${lighting('', 5, 8)}
- ${lighting('24', 0.45, 0.8)}
  <linearGradient id="cone" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="var(--ice-400)"/><stop offset="1" stop-color="var(--ice-400)" stop-opacity="0"/></linearGradient>
  <linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset=".72" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
  <linearGradient id="fadeL" x1="0" y1="0" x2="1" y2="0"><stop offset=".40" stop-color="#000"/><stop offset=".56" stop-color="#fff"/></linearGradient>
@@ -249,20 +211,10 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.
   <path class="flow" d="${traces[0]}" stroke="var(--ice-400)"/><path class="flow" d="${traces[1]}" stroke="var(--uv-400)"/><path class="flow" d="${traces[2]}" stroke="var(--ice-400)"/>
  </g>
 <ellipse cx="${PED.tux[0]}" cy="${PED.tux[1] + 6}" rx="230" ry="70" fill="var(--uv-400)" opacity=".14" filter="url(#glow)"/>
-<polygon class="cone" points="${PED.tux[0] - 70},${PED.tux[1]} ${PED.tux[0] + 70},${PED.tux[1]} ${PED.tux[0] + 175},0 ${PED.tux[0] - 175},0" fill="url(#cone)" filter="url(#glow)"/>
+<polygon class="cone" opacity=".35" points="${PED.tux[0] - 70},${PED.tux[1]} ${PED.tux[0] + 70},${PED.tux[1]} ${PED.tux[0] + 175},0 ${PED.tux[0] - 175},0" fill="url(#cone)" filter="url(#glow)"/>
 
 <!-- pedestals -->
-${pedestal(...PED.bsd, 62, 'openbsd')}
-${pedestal(...PED.void, 56, 'void')}
-${pedestal(...PED.tux, 78, 'linux')}
-
-<!-- OpenBSD Puffy -->
-<ellipse cx="${PED.bsd[0]}" cy="${PED.bsd[1] + 4}" rx="44" ry="13" fill="var(--gray-1000)" opacity=".7" filter="url(#soft)"/>
-<g transform="translate(${PED.bsd[0] - 66},${PED.bsd[1] - 140})"><g class="bob2"><g transform="scale(5.5)">${foil('bsd', iconPath('openbsd.svg'), { depth: 4 })}</g></g></g>
-
-<!-- Void Linux -->
-<ellipse cx="${PED.void[0]}" cy="${PED.void[1] + 4}" rx="40" ry="12" fill="var(--gray-1000)" opacity=".7" filter="url(#soft)"/>
-<g transform="translate(${PED.void[0] - 54},${PED.void[1] - 124})"><g class="bob3"><g transform="scale(4.5)">${foil('void', iconPath('voidlinux.svg'), { spin: true })}</g></g></g>
+${pedestal(...PED.tux, SZ, 'linux')}
 
 <!-- Tux: reflection, ghosts, extrusion, acid rim, foil face -->
 <ellipse cx="${PED.tux[0]}" cy="${FOOT}" rx="100" ry="20" fill="var(--gray-1000)" opacity=".55" filter="url(#glow)"/>
@@ -289,7 +241,7 @@ ${pedestal(...PED.tux, 78, 'linux')}
 </g>
 
 <!-- scanlines over everything -->
-<g class="scan"><rect y="-4" width="${W}" height="${H + 8}" fill="url(#scanp)" opacity=".1"/></g>
+<rect width="${W}" height="${H}" fill="url(#scanp)" opacity=".1"/>
 </g>
 </svg>
 `;
