@@ -109,29 +109,32 @@ function pedestal(cx, cy, a, label, th = 16) {
   return s;
 }
 
-// floor: a large faint board that dissolves into the canvas edges
+// floor: an open isometric grid centred on the pedestal, fading out radially so the
+// words on the left sit on the same ground without a hard board edge
 function floor() {
-  const P = iso(PED.tux[0], 400), a = 440, b = 160;
-  const T = [P(-a, -b), P(a, -b), P(a, b), P(-a, b)];
-  let s = `<polygon points="${poly(T)}" fill="var(--gray-950)" stroke="var(--uv-400)" stroke-width="2" opacity=".9"/>`;
-  for (let k = 1; k < 22; k++) {
-    const x = -a + (2 * a * k) / 22; s += `<line x1="${pt(P(x, -b)).split(',')[0]}" y1="${pt(P(x, -b)).split(',')[1]}" x2="${pt(P(x, b)).split(',')[0]}" y2="${pt(P(x, b)).split(',')[1]}" stroke="var(--ice-400)" stroke-opacity=".14" stroke-width="1"/>`;
+  const P = iso(PED.tux[0], PED.tux[1] + 40), a = 1000, step = 44;
+  let s = '';
+  for (let x = -a; x <= a; x += step) {
+    const [x1, y1] = P(x, -a), [x2, y2] = P(x, a), [u1, v1] = P(-a, x), [u2, v2] = P(a, x);
+    s += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"/><line x1="${u1.toFixed(1)}" y1="${v1.toFixed(1)}" x2="${u2.toFixed(1)}" y2="${v2.toFixed(1)}"/>`;
   }
-  for (let k = 1; k < 8; k++) {
-    const y = -b + (2 * b * k) / 8; s += `<line x1="${pt(P(-a, y)).split(',')[0]}" y1="${pt(P(-a, y)).split(',')[1]}" x2="${pt(P(a, y)).split(',')[0]}" y2="${pt(P(a, y)).split(',')[1]}" stroke="var(--ice-400)" stroke-opacity=".14" stroke-width="1"/>`;
-  }
-  return s;
+  return `<g stroke="var(--ice-400)" stroke-opacity=".2" stroke-width="1">${s}</g>`;
 }
 
 // one pedestal; traces leave its front faces and dissolve into the floor
 const PED = { tux: [1230, 280] }, SZ = 84, TH = 16;
 const trace = (pts) => `M${pts.map(pt).join(' L')}`;
 const [px, py] = PED.tux;
+// left bus runs from the chip to the end of the stats line, right one to a node on the floor
+const STATS_END = 72 + 34 * 19 * 0.7 + 20, BUS_Y = 327;
+const lf = [px - SZ * C, py + SZ / 2 + TH], rf = [px + SZ * C, py + SZ / 2 + TH];
 const traces = [
-  trace([[px - SZ * C, py + SZ / 2 + TH], [px - SZ * C - 30, py + SZ / 2 + TH + 17], [px - 330, py + SZ / 2 + TH + 17], [px - 380, py + 30]]),
-  trace([[px + SZ * C, py + SZ / 2 + TH], [px + SZ * C + 30, py + SZ / 2 + TH + 17], [px + 300, py + SZ / 2 + TH + 17], [px + 360, py + 20]]),
+  trace([lf, [lf[0] - 22, BUS_Y], [STATS_END, BUS_Y]]),
+  trace([rf, [rf[0] + 30, rf[1] + 17], [px + 290, rf[1] + 17]]),
   trace([[px, py + SZ + TH], [px, H]]),
 ];
+const nodes = [[STATS_END, BUS_Y, 'ice'], [px + 290, rf[1] + 17, 'uv']]
+  .map(([x, y, r]) => `<rect x="${(x - 5).toFixed(1)}" y="${y - 5}" width="10" height="10" rx="2" fill="var(--${r}-400)"/>`).join('');
 
 const tokens = read('../../../ring-zero-design-system/tokens.css').match(/:root,\[data-theme="pitch"\]\{([\s\S]*?)\}/)[1];
 const bands = `<stop offset="0" stop-color="var(--ice-400)"/><stop offset=".2" stop-color="var(--uv-400)"/><stop offset=".4" stop-color="var(--flare-400)"/><stop offset=".6" stop-color="var(--kapton-400)"/><stop offset=".8" stop-color="var(--ice-200)"/><stop offset="1" stop-color="var(--ice-400)"/>`;
@@ -189,9 +192,8 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.
  <filter id="fres" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="3"/></filter>
  ${lighting('', 5, 8)}
  <linearGradient id="cone" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="var(--ice-400)"/><stop offset="1" stop-color="var(--ice-400)" stop-opacity="0"/></linearGradient>
- <linearGradient id="fadeB" x1="0" y1="0" x2="0" y2="1"><stop offset=".72" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
- <linearGradient id="fadeL" x1="0" y1="0" x2="1" y2="0"><stop offset=".40" stop-color="#000"/><stop offset=".56" stop-color="#fff"/></linearGradient>
- <mask id="floorM" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="url(#fadeL)"/><rect width="${W}" height="${H}" fill="url(#fadeB)" style="mix-blend-mode:multiply"/></mask>
+ <radialGradient id="floorR" gradientUnits="userSpaceOnUse" cx="${PED.tux[0]}" cy="${PED.tux[1] + 50}" r="520" gradientTransform="translate(${PED.tux[0]} ${PED.tux[1] + 50}) scale(1.5 .62) translate(-${PED.tux[0]} -${PED.tux[1] + 50})"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+ <mask id="floorM" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="url(#floorR)"/></mask>
  <linearGradient id="rflfade" gradientUnits="userSpaceOnUse" x1="0" y1="${FOOT}" x2="0" y2="${FOOT + 70}"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
  <mask id="rfl" maskUnits="userSpaceOnUse" x="0" y="${FOOT}" width="${W}" height="${H - FOOT}"><rect x="0" y="${FOOT}" width="${W}" height="${H - FOOT}" fill="url(#rflfade)"/></mask>
  <pattern id="scanp" width="4" height="2" patternUnits="userSpaceOnUse"><rect width="4" height="1" fill="#000"/></pattern>
@@ -209,6 +211,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.
 <g filter="url(#tglow)" fill="none" stroke-width="2.5" stroke-linejoin="round">
   <path d="${traces[0]}" stroke="var(--ice-400)" opacity=".45"/><path d="${traces[1]}" stroke="var(--uv-400)" opacity=".45"/><path d="${traces[2]}" stroke="var(--ice-400)" opacity=".45"/>
   <path class="flow" d="${traces[0]}" stroke="var(--ice-400)"/><path class="flow" d="${traces[1]}" stroke="var(--uv-400)"/><path class="flow" d="${traces[2]}" stroke="var(--ice-400)"/>
+  ${nodes}
  </g>
 <ellipse cx="${PED.tux[0]}" cy="${PED.tux[1] + 6}" rx="230" ry="70" fill="var(--uv-400)" opacity=".14" filter="url(#glow)"/>
 <polygon class="cone" opacity=".35" points="${PED.tux[0] - 70},${PED.tux[1]} ${PED.tux[0] + 70},${PED.tux[1]} ${PED.tux[0] + 175},0 ${PED.tux[0] - 175},0" fill="url(#cone)" filter="url(#glow)"/>
@@ -227,6 +230,7 @@ ${pedestal(...PED.tux, SZ, 'linux')}
  ${tuxFace}
 </g>
 
+<ellipse cx="330" cy="230" rx="300" ry="120" fill="var(--uv-400)" opacity=".05" filter="url(#glow)"/>
 <!-- words -->
 <g transform="translate(72,0)">
  <rect y="74" width="16" height="16" rx="3" fill="var(--ink)"/>
