@@ -1,0 +1,5 @@
+Source: https://commons.wikimedia.org/wiki/File:Tux.svg (raw: https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg), saved as tux.svg.
+Authors: Larry Ewing (lewing@isc.tamu.edu) and The GIMP; Simon Budig; Garrett LeSage (vector, CC0).
+Licence per file page: Larry Ewing / Simon Budig copyright notice: "These drawings are copyrighted by Larry Ewing and Simon Budig (penguin-variant.sk also by Anja Gerwinski), redistribution is free but has to include this README/Copyright notice." Garrett LeSage's contribution: CC0. File page also carries a {{Trademarked}} tag.
+Required attribution: credit "Larry Ewing and The GIMP" (Tux, by Larry Ewing, Simon Budig, Garrett LeSage) and keep the copyright notice above wherever the artwork is redistributed. Suggested caption credit: "Tux: Larry Ewing, Simon Budig, Garrett LeSage (via Wikimedia Commons)".
+The banner (assets/banner.svg) is a derivative (outline paths restyled); not an endorsement by the authors. Tux is a Linux trademark-tagged mascot.
