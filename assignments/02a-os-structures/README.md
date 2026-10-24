@@ -1,4 +1,6 @@
-# Tarea 2: Comparing operating system structures
+# Assignment 2a: Comparing operating system structures
+
+![type](https://img.shields.io/badge/type-assignment-fd9330?style=flat-square) ![env](https://img.shields.io/badge/env-research-262626?style=flat-square) ![report](https://img.shields.io/badge/report-Spanish-262626?style=flat-square)
 
 A two-page comparison of five ways to organize an operating system, which are the monolithic, layered, microkernel, virtual machine and client/server designs. The table gives each one's organization, pros and cons, plus real systems built that way, such as Linux, MINIX 3, QNX or VMware ESXi. The report closes with two analysis questions.
 

@@ -1,5 +1,7 @@
 # Lab 1: Preparing the Linux environment
 
+![type](https://img.shields.io/badge/type-lab-67e1fd?style=flat-square) ![env](https://img.shields.io/badge/env-Ubuntu%2018.04%20VM%20%C2%B7%20Vagrant-262626?style=flat-square) ![report](https://img.shields.io/badge/report-Spanish-262626?style=flat-square)
+
 The goal was to deploy the Linux VM used for the rest of the semester and prove it works: SSH access, the `test_proc` test program, and the four tools the course relies on (`gcc`, `make`, `strace`, `htop`). The guide offers two ways to build it, Terraform (option A) or Vagrant (option B). Guide: [lab1-preparacion-entorno](https://github.com/isacioutp/Sistema-Operativo-utp/tree/main/lab1-preparacion-entorno).
 
 ## What happened

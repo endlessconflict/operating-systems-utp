@@ -1,4 +1,6 @@
-# Tarea 3: OOM killer incident and RCA
+# Assignment 3: OOM killer incident and RCA
+
+![type](https://img.shields.io/badge/type-assignment-fd9330?style=flat-square) ![env](https://img.shields.io/badge/env-Ubuntu%2018.04%20%C2%B7%20Docker%2024%20%C2%B7%20cgroups%20v2-262626?style=flat-square) ![report](https://img.shields.io/badge/report-Spanish-262626?style=flat-square)
 
 An incident-response exercise. A Flask microservice on port 5001 keeps dying, and the container shows `Exited (137)`. Acting as SRE, the job is to confirm the symptom, collect evidence, explain the cause, mitigate it and leave a fix. The one hard rule is that `app.py` cannot be edited, so the fix has to come from the container and the OS.
 

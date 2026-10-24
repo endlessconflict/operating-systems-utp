@@ -1,6 +1,6 @@
 # Case study: sizing Nginx and MySQL, native against Docker
 
-![type](https://img.shields.io/badge/type-case%20study-ff9a35) ![env](https://img.shields.io/badge/env-VirtualBox%20VM%208%20GB%20%2F%204%20vCPU-lightgrey) ![report](https://img.shields.io/badge/report-Spanish-lightgrey)
+![type](https://img.shields.io/badge/type-case%20study-fd9330?style=flat-square) ![env](https://img.shields.io/badge/env-VM%208%20GB%2F4%20vCPU%20and%204%20GB%2F2%20vCPU-262626?style=flat-square) ![report](https://img.shields.io/badge/report-Spanish-262626?style=flat-square)
 
 A small shop goes live with Nginx and MySQL/InnoDB on one server. The nightly peak is 800 to 1 200 concurrent users with 2 to 4 connections each. The case asks for how many processes, how many connections and how much memory to give two servers (A with 8 GB and 4 vCPU, B with 4 GB and 2 vCPU) and two deployment routes, native install and Docker. I calculated everything, then checked every number on a real VM resized to each scenario.
 

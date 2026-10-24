@@ -1,6 +1,6 @@
 # Lab 5: File descriptors and durability
 
-![type](https://img.shields.io/badge/type-lab-6ae0ff) ![env](https://img.shields.io/badge/env-Ubuntu%2018.04%20VM-lightgrey) ![report](https://img.shields.io/badge/report-Spanish-lightgrey)
+![type](https://img.shields.io/badge/type-lab-67e1fd?style=flat-square) ![env](https://img.shields.io/badge/env-Ubuntu%2018.04%20VM-262626?style=flat-square) ![report](https://img.shields.io/badge/report-Spanish-262626?style=flat-square)
 
 Two production tickets, solved separately, each written up as hypothesis, command, result, decision, action.
 

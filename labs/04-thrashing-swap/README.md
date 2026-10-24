@@ -1,6 +1,6 @@
 # Lab 4: Thrashing and swap
 
-![type](https://img.shields.io/badge/type-lab-6ae0ff) ![env](https://img.shields.io/badge/env-Ubuntu%2018.04%20%C2%B7%20Docker%2024-lightgrey) ![report](https://img.shields.io/badge/report-Spanish-lightgrey)
+![type](https://img.shields.io/badge/type-lab-67e1fd?style=flat-square) ![env](https://img.shields.io/badge/env-Ubuntu%2018.04%20%C2%B7%20Docker%2024-262626?style=flat-square) ![report](https://img.shields.io/badge/report-Spanish-262626?style=flat-square)
 
 An incident drill. A Flask service on port 5002 answers `HTTP 200` every time, but `/api/v1/analytics` takes tens of seconds instead of a fraction of one. Nothing crashes and nothing shows up in the app logs. The rule of the lab is that `app.py` stays untouched, so the fix has to live in the container and the operating system.
 

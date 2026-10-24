@@ -1,4 +1,6 @@
-# Tarea 1: Identifying and classifying operating systems
+# Assignment 1: Identifying and classifying operating systems
+
+![type](https://img.shields.io/badge/type-assignment-fd9330?style=flat-square) ![env](https://img.shields.io/badge/env-Windows%2011%20%C2%B7%20Ubuntu%2024.04%20VM-262626?style=flat-square) ![report](https://img.shields.io/badge/report-Spanish-262626?style=flat-square)
 
 The assignment compares Windows and Linux by looking at the running systems rather than reading about them, and it ends with a comparison table and five reflection questions.
 

@@ -1,0 +1,6 @@
+* text=auto eol=lf
+*.png binary
+*.pdf binary
+*.mp4 binary
+*.drawio linguist-generated
+assets/banner.html linguist-generated

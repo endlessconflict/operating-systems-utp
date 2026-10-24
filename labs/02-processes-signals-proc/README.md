@@ -1,5 +1,7 @@
 # Lab 2: Processes, signals and /proc
 
+![type](https://img.shields.io/badge/type-lab-67e1fd?style=flat-square) ![env](https://img.shields.io/badge/env-Ubuntu%20under%20WSL2-262626?style=flat-square) ![report](https://img.shields.io/badge/report-Spanish-262626?style=flat-square)
+
 Hands-on work with Linux processes in three phases. First I generated CPU load and followed PIDs, PPIDs and states up to PID 1. Then I sent POSIX signals to a script that catches them with `trap`, and the last phase went through `/proc/<PID>/` to look at open file descriptors, context switches and resource limits. The lab also has two debugging challenges. Guide: [lab2_proceso_senales](https://github.com/isacioutp/Sistema-Operativo-utp/tree/main/lab2_proceso_senales).
 
 ## Environment

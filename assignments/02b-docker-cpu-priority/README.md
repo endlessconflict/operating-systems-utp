@@ -1,4 +1,6 @@
-# Tarea 2: Process priority with Docker and CPU limits
+# Assignment 2b: Process priority with Docker and CPU limits
+
+![type](https://img.shields.io/badge/type-assignment-fd9330?style=flat-square) ![env](https://img.shields.io/badge/env-Ubuntu%2018.04%20%C2%B7%20Docker%2024-262626?style=flat-square) ![report](https://img.shields.io/badge/report-Spanish-262626?style=flat-square)
 
 The course provides `app.py`, a small Flask service whose `/login` route sleeps 2 seconds (a fake database call) and then burns about 0.5 seconds of CPU on SHA-256 hashes. The task is to run it in a CPU-limited container, make it compete with 20 CPU-bound processes, and then give it priority, proving the result with response times and `htop`.
 

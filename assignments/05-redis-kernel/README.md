@@ -1,6 +1,6 @@
-# Tarea 5: Redis and the Linux kernel
+# Assignment 5: Redis and the Linux kernel
 
-![type](https://img.shields.io/badge/type-homework-ff9a35) ![env](https://img.shields.io/badge/env-Ubuntu%2018.04%20VM-lightgrey) ![report](https://img.shields.io/badge/report-Spanish-lightgrey)
+![type](https://img.shields.io/badge/type-assignment-fd9330?style=flat-square) ![env](https://img.shields.io/badge/env-Ubuntu%2018.04%20VM-262626?style=flat-square) ![report](https://img.shields.io/badge/report-Spanish-262626?style=flat-square)
 
 A short guided lab ("Lab 0 Redis") worth two participation points. It follows `redis-server` down into the kernel without root, and ends with a closing table that ties each observation to what it means for Redis.
 
